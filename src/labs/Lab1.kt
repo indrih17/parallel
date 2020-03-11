@@ -9,9 +9,9 @@ import testVector
 fun main() {
     val threadPool = ThreadPool(10)
     val vector = testVector(1000)
-    val k = 101
-    val result = multiple(vector, number = k, threadPool = threadPool)
-    val normalVector = vector multiple k
+    val number = 101
+    val result = multiple(vector, number = number, threadPool = threadPool)
+    val normalVector = vector multiple number
     println(result == normalVector)
     threadPool.interrupt()
 }
