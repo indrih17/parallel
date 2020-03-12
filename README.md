@@ -7,12 +7,11 @@
 Запускать нужно в IDE: IntelliJ Idea.
 
 ## Как запустить?
-1. Проверьте `File -> Project Structure -> Project -> Project SDK`. Там должен быть выбран JDK. Желательно 13.0.2. 
+1. Проверьте `File -> Project Structure -> Project`. В `Project SDK` должен быть выбран JDK. Желательно 13.0.2. 
 Его можно скачать [тут](https://www.oracle.com/java/technologies/javase-jdk13-downloads.html).
-2. Проверьте `File -> Project Structure -> Project -> Modules`. Папка `src` должна быть помечена синим (sources).
-3. Если такой опции нет (маловероятно, но вдруг) - закройте проект, удалите папку `.idea`, откройте проект.
-4. Перейдите в нужную лабу.
-5. Если там предлагается сконфигурировать Kotlin (т.е. Вы его ещё не скачали) - согласитесь. Далее выбрать Java.
+2. Там же удостоверьтесь, что в `Project compiler output` указан путь до проекта и в конце `/out`. Пример:
+`/home/kirill/IdeaProjects/parallel/out`.
+3. Откройте нужую лабу, около функции `main` есть зелёная кнопка, нажмите на неё.
 
 ## Лабы
 ### Порядок
