@@ -1,9 +1,11 @@
-import data.Vector
-import data.matrix
+package threads
+
+import threads.data.Vector
+import threads.data.matrix
 
 /**
  * Пример:
- * testMatrix(2)
+ * threads.testMatrix(2)
  *
  * Результат:
  * [0, 1]
@@ -13,7 +15,7 @@ fun testMatrix(size: Int) = matrix(size) { i, j -> i + j }
 
 /**
  * Пример:
- * testVector(2)
+ * threads.testVector(2)
  *
  * Результат:
  * [0, 1]

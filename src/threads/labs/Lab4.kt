@@ -1,11 +1,11 @@
-package labs
+package threads.labs
 
-import data.ThreadPool
-import data.matrixOf
-import data.multiple
-import data.Matrix
-import data.matrix
-import data.map
+import threads.data.ThreadPool
+import threads.data.matrixOf
+import threads.data.multiple
+import threads.data.Matrix
+import threads.data.matrix
+import threads.data.map
 
 fun main() {
     val threadPool = ThreadPool(10)

@@ -1,17 +1,17 @@
-package labs
+package threads.labs
 
-import data.ThreadPool
-import data.Matrix
-import data.Vector
-import data.vector
-import testVector
-import testMatrix
-import data.multiple
+import threads.data.ThreadPool
+import threads.data.Matrix
+import threads.data.Vector
+import threads.data.vector
+import threads.testVector
+import threads.testMatrix
+import threads.data.multiple
 
 fun main() {
     val threadPool = ThreadPool(10)
-    val matrix = testMatrix(100)
-    val vector = testVector(100)
+    val matrix = testMatrix(2)
+    val vector = testVector(2)
     val result = multiple(matrix, vector, threadPool)
     val normalResult = matrix multiple vector
     println(result == normalResult)

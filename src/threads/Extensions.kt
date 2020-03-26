@@ -1,4 +1,6 @@
-import data.Vector
+package threads
+
+import threads.data.Vector
 
 /**
  * Разбить вектор на подсписки размером [step] и трансформацией каждого списка в [R].
@@ -18,13 +20,21 @@ import data.Vector
 inline fun <T, R> Vector<T>.splitVector(step: Int, transform: (List<T>) -> R): Vector<R> =
     splitVectorIndexed(step) { _, _, vector -> transform(vector) }
 
+/** То же самое, что и [splitVector], только [transform] ещё содержит номер итерации. */
+inline fun <T, R> Vector<T>.splitWithIterationNumber(
+    step: Int,
+    transform: (iteration: Int, list: List<T>) -> R
+): Vector<R> {
+    var iteration = 1
+    return splitVectorIndexed(step) { _, _, vector -> transform(iteration++, vector) }
+}
+
 /** То же самое, что и [splitVector], только [transform] ещё содержит индексы. */
 inline fun <T, R> Vector<T>.splitVectorIndexed(
     step: Int,
     transform: (from: Int, to: Int, list: List<T>) -> R
 ): Vector<R> {
-    check(step < size) { "Шаг должен быть меньше, чем размер списка" }
-    check(step > 0) { "Шаг должен быть больше 0" }
+    assert(step > 0) { println("Шаг должен быть больше 0") }
     val result = ArrayList<R>(size / step)
     var index = 0
     while (index < size) {

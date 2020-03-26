@@ -1,10 +1,10 @@
-package labs
+package threads.labs
 
-import data.ThreadPool
-import data.Vector
-import data.multiple
-import splitVectorIndexed
-import testVector
+import threads.data.ThreadPool
+import threads.data.Vector
+import threads.data.multiple
+import threads.splitVectorIndexed
+import threads.testVector
 
 fun main() {
     val threadPool = ThreadPool(10)

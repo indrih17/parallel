@@ -1,4 +1,4 @@
-package data
+package threads.data
 
 import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread

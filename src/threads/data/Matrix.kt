@@ -1,4 +1,4 @@
-package data
+package threads.data
 
 /**
  * Создание квадратной матрицы размера [size].

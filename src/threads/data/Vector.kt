@@ -1,4 +1,4 @@
-package data
+package threads.data
 
 /** Просто чтобы писать [Vector] вместо [List]. Они взаимозаменяемы (ну почти). */
 typealias Vector<T> = List<T>
