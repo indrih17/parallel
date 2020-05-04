@@ -1,32 +1,29 @@
 package mpi.labs
 
-import mpi.CommunicationInfo
-import mpi.awaitAllMessages
-import mpi.getLength
+import mpi.*
 import mpi.data.centerRank
 import mpi.data.commWorld
 import mpi.data.Message
-import mpi.data.splitWithIterationNumber
 import mpi.data.merge
 import kotlin.random.Random
 
 fun main(args: Array<String>) = commWorld(args) { communicator ->
-    val rank = communicator.rank
+    val currentRank = communicator.rank
     val messageSize = 12
     val number = 2
-    val commInfo = CommunicationInfo(communicator, messageSize)
-    when (rank) {
+    val commInfo = CommInfo(communicator, messageSize, centralRankCollectsData = true)
+    when (currentRank) {
         centerRank -> {
             val vector = Message(messageSize) { Random.nextInt(1, 10) }
             println("Vector: ${vector.contentToString()}")
             println("Number: $number")
 
-            vector.splitWithIterationNumber(step = commInfo.subMessageSize) { iteration, msg ->
-                communicator.asyncSend(msg, destination = iteration)
-            }
+            commInfo
+                .split(vector)
+                .forEach { (rank, msg) -> communicator.asyncSend(msg, rank) }
+
             val result = commInfo
-                .receivingRanks
-                .map { communicator.asyncReceive(size = commInfo.subMessageSize, source = it) }
+                .onEachRank { rank, range -> communicator.asyncReceive(size = range.size, source = rank) }
                 .awaitAllMessages()
                 .merge()
             println("Result: ${result.contentToString()}")
@@ -39,6 +36,6 @@ fun main(args: Array<String>) = commWorld(args) { communicator ->
                 destination = centerRank
             )
         }
-        else -> println("Ранк не используется: $rank")
+        else -> println("Ранк не используется: $currentRank")
     }
 }

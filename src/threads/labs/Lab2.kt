@@ -5,14 +5,19 @@ import threads.data.Vector
 import threads.data.multiple
 import threads.splitVectorIndexed
 import threads.testVector
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val threadPool = ThreadPool(10)
-    val vector1 = testVector(1000)
-    val vector2 = testVector(1000)
-    val result = multiple(vector1, vector2, threadPool)
-    val normalVector = vector1 multiple vector2
-    println(result == normalVector)
+    val vector1 = testVector(10000000)
+    val vector2 = testVector(10000000)
+    val multiTime = measureTimeMillis {
+        multiple(vector1, vector2, threadPool)
+    }
+    val singleTime = measureTimeMillis {
+        vector1 multiple vector2
+    }
+    println("Single: $singleTime, multi: $multiTime")
     threadPool.interrupt()
 }
 

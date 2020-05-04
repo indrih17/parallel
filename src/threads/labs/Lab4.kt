@@ -1,25 +1,24 @@
 package threads.labs
 
 import threads.data.ThreadPool
-import threads.data.matrixOf
 import threads.data.multiple
 import threads.data.Matrix
 import threads.data.matrix
 import threads.data.map
+import threads.testMatrix
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val threadPool = ThreadPool(10)
-    val first = matrixOf(
-        listOf(1, 2),
-        listOf(3, 4)
-    )
-    val second = matrixOf(
-        listOf(5, 6),
-        listOf(7, 8)
-    )
-    val result = multiple(first, second, threadPool)
-    val normalResult = first multiple second
-    println(result == normalResult)
+    val first = testMatrix(500)
+    val second = testMatrix(500)
+    val multiTime = measureTimeMillis {
+        multiple(first, second, threadPool)
+    }
+    val singleTime = measureTimeMillis {
+        first multiple second
+    }
+    println("Single: $singleTime, multi: $multiTime")
     threadPool.interrupt()
 }
 

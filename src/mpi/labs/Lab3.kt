@@ -1,52 +1,40 @@
 package mpi.labs
 
-import mpi.CommunicationInfo
-import mpi.awaitAll
-import mpi.awaitAllMessages
-import mpi.data.Message
-import mpi.data.stringify
-import mpi.data.getColumn
-import mpi.data.merge
-import mpi.data.multiple
-import mpi.data.commWorld
-import mpi.data.centerRank
-import threads.splitWithIterationNumber
+import mpi.*
+import mpi.data.*
 import kotlin.random.Random
 
 private const val matrixSize = 2
 
 fun main(args: Array<String>) = commWorld(args) { communicator ->
-    val rank = communicator.rank
-    val commInfo = CommunicationInfo(communicator, matrixSize)
-
-    when (rank) {
+    val currentRank = communicator.rank
+    val commInfo = CommInfo(communicator, matrixSize, centralRankCollectsData = true)
+    when (currentRank) {
         centerRank -> {
             val matrix = List(matrixSize) { Message(matrixSize) { Random.nextInt(1, 5) } }
             val vector = Message(matrixSize) { Random.nextInt(1, 5) }
             println(matrix.stringify())
             println("Vector:   ${vector.contentToString()}")
 
-            matrix
-                .indices
-                .map(matrix::getColumn)
-                .splitWithIterationNumber(step = commInfo.subMessageSize) { iteration, list ->
+            commInfo
+                .split(matrix)
+                .map { (rank, list) ->
                     list
-                        .map { communicator.asyncSend(it, destination = iteration) }
-                        .plus(communicator.asyncSend(vector, destination = iteration))
+                        .map { communicator.asyncSend(it, rank) }
+                        .plus(communicator.asyncSend(vector, rank))
                 }
                 .flatten()
                 .awaitAll()
 
             val result = commInfo
-                .receivingRanks
-                .map { communicator.asyncReceive(size = commInfo.subMessageSize, source = it) }
+                .onEachRank { rank, range -> communicator.asyncReceive(size = range.size, source = rank)  }
                 .awaitAllMessages()
                 .merge()
             println("Result:   ${result.contentToString()}")
         }
         in commInfo.receivingRanks -> {
             val vectorList = commInfo
-                .subMessageRange
+                .rangeForRank(currentRank)
                 .map { communicator.asyncReceive(size = matrixSize, source = centerRank) }
                 .awaitAllMessages()
             val vector = communicator.receive(size = matrixSize, source = centerRank)
@@ -57,6 +45,6 @@ fun main(args: Array<String>) = commWorld(args) { communicator ->
                 destination = centerRank
             )
         }
-        else -> println("Ранк не используется: $rank")
+        else -> println("Ранк не используется: $currentRank")
     }
 }

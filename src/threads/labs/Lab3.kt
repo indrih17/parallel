@@ -7,14 +7,19 @@ import threads.data.vector
 import threads.testVector
 import threads.testMatrix
 import threads.data.multiple
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val threadPool = ThreadPool(10)
-    val matrix = testMatrix(2)
-    val vector = testVector(2)
-    val result = multiple(matrix, vector, threadPool)
-    val normalResult = matrix multiple vector
-    println(result == normalResult)
+    val matrix = testMatrix(10000)
+    val vector = testVector(10000)
+    val multiTime = measureTimeMillis {
+        multiple(matrix, vector, threadPool)
+    }
+    val singleTime = measureTimeMillis {
+        matrix multiple vector
+    }
+    println("Single: $singleTime, multi: $multiTime")
     threadPool.interrupt()
 }
 

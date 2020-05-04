@@ -14,3 +14,5 @@ fun Pair<Message, Request>.await(): Message {
 
 fun List<Pair<Message, Request>>.awaitAllMessages(): List<Message> =
     map(Pair<Message, Request>::await)
+
+val IntRange.size: Int get() = last - first + 1

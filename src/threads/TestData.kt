@@ -2,22 +2,8 @@ package threads
 
 import threads.data.Vector
 import threads.data.matrix
+import kotlin.random.Random
 
-/**
- * Пример:
- * threads.testMatrix(2)
- *
- * Результат:
- * [0, 1]
- * [2, 3]
- */
-fun testMatrix(size: Int) = matrix(size) { i, j -> i + j }
+fun testMatrix(size: Int) = matrix(size) { _, _ -> Random.nextInt() }
 
-/**
- * Пример:
- * threads.testVector(2)
- *
- * Результат:
- * [0, 1]
- */
-fun testVector(size: Int): Vector<Int> = List(size) { it }
+fun testVector(size: Int): Vector<Int> = List(size) { Random.nextInt() }

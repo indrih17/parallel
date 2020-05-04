@@ -20,15 +20,6 @@ import threads.data.Vector
 inline fun <T, R> Vector<T>.splitVector(step: Int, transform: (List<T>) -> R): Vector<R> =
     splitVectorIndexed(step) { _, _, vector -> transform(vector) }
 
-/** То же самое, что и [splitVector], только [transform] ещё содержит номер итерации. */
-inline fun <T, R> Vector<T>.splitWithIterationNumber(
-    step: Int,
-    transform: (iteration: Int, list: List<T>) -> R
-): Vector<R> {
-    var iteration = 1
-    return splitVectorIndexed(step) { _, _, vector -> transform(iteration++, vector) }
-}
-
 /** То же самое, что и [splitVector], только [transform] ещё содержит индексы. */
 inline fun <T, R> Vector<T>.splitVectorIndexed(
     step: Int,

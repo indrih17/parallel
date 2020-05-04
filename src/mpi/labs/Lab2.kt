@@ -1,37 +1,30 @@
 package mpi.labs
 
-import mpi.CommunicationInfo
-import mpi.awaitAllMessages
+import mpi.*
 import mpi.data.commWorld
 import mpi.data.centerRank
 import mpi.data.Message
-import mpi.data.splitWithIterationNumber
 import mpi.data.merge
 import mpi.data.multiple
-import mpi.getLength
 import kotlin.random.Random
 
 fun main(args: Array<String>) = commWorld(args) { communicator ->
-    val rank = communicator.rank
+    val currentRank = communicator.rank
     val vectorSize = 12
-    val commInfo = CommunicationInfo(communicator, vectorSize)
-    when (rank) {
+    val commInfo = CommInfo(communicator, vectorSize, centralRankCollectsData = true)
+    when (currentRank) {
         centerRank -> {
             val vector1 = Message(vectorSize) { Random.nextInt(1, 10) }
             val vector2 = Message(vectorSize) { Random.nextInt(1, 10) }
             println("Vector 1: ${vector1.contentToString()}")
             println("Vector 2: ${vector2.contentToString()}")
 
-            vector1.splitWithIterationNumber(step = commInfo.subMessageSize) { iteration, msg ->
-                communicator.asyncSend(msg, destination = iteration)
-            }
-            vector2.splitWithIterationNumber(step = commInfo.subMessageSize) { iteration, msg ->
-                communicator.asyncSend(msg, destination = iteration)
+            listOf(vector1, vector2).forEach { vector ->
+                commInfo.split(vector).forEach { (rank, msg) -> communicator.asyncSend(msg, rank) }
             }
 
             val result = commInfo
-                .receivingRanks
-                .map { communicator.asyncReceive(size = commInfo.subMessageSize, source = it) }
+                .onEachRank { rank, range -> communicator.asyncReceive(size = range.size, source = rank) }
                 .awaitAllMessages()
                 .merge()
             println("Result:   ${result.contentToString()}")
@@ -45,6 +38,6 @@ fun main(args: Array<String>) = commWorld(args) { communicator ->
                 destination = centerRank
             )
         }
-        else -> println("Ранк не используется: $rank")
+        else -> println("Ранк не используется: $currentRank")
     }
 }
