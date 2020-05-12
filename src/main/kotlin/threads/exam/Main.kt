@@ -58,7 +58,7 @@ suspend fun main() {
     println("----------------------------------------------------------------")
     if (singleResult.value == multiResult.value) {
         println("Single: ${singleResult.duration}, multi: ${multiResult.duration}")
-        println("RESULT: ${singleResult.duration}")
+        println("RESULT: ${singleResult.value}")
     } else {
         error("Single result != multi result")
     }

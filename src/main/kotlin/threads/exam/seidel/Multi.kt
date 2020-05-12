@@ -2,6 +2,8 @@ package threads.exam.seidel
 
 import koma.extensions.get
 import koma.matrix.Matrix
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import threads.exam.jacobi.jacobi
 import kotlin.math.pow
@@ -17,22 +19,26 @@ suspend fun seidelParallel(
     val indices = 0 until size
 
     var previousValues = List(size) { 0.0 }
-    var converge = false
+    var norm: Double
 
-    while (!converge) {
-        val currentValues = freeMembers.mapIndexed { i, member ->
-            val sum = indices
-                .minus(i)
-                .map { j -> matrix[i, j] * previousValues[j] }
-                .sum()
-            (member - sum) / matrix[i, i]
-        }
+    do {
+        val currentValues = freeMembers
+            .mapIndexed { i, member ->
+                async {
+                    val sum = indices
+                        .minus(i)
+                        .map { j -> matrix[i, j] * previousValues[j] }
+                        .sum()
+                    (member - sum) / matrix[i, i]
+                }
+            }
+            .awaitAll()
 
         val sqrSum = previousValues
             .mapIndexed { index, prev -> (currentValues[index] - prev).pow(2) }
             .sum()
-        converge = sqrt(sqrSum) <= eps
+        norm = sqrt(sqrSum)
         previousValues = currentValues
-    }
+    } while (norm > eps)
     return@coroutineScope previousValues
 }
